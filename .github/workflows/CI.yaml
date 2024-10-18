@@ -7,6 +7,36 @@ on:
     branches:
       - 'main'
 
+# courtesy from : https://docs.dagger.io/integrations/github/
+name: dagger
+on:
+  push:
+    branches: [main]
+
+jobs:
+  hello:
+    name: hello
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+        # name: Call Dagger Function
+      - name: Publish
+        uses: dagger/dagger-for-github@v6
+        with:
+          # version: "latest"
+          version: "0.13.5"
+          verb: call
+          # --- pas besoin de modul dagger est dans le repo
+          # module: github.com/shykes/daggerverse/hello@v0.1.2
+          workdir: hello
+          args: publish --source=.
+          # args: hello --greeting="bonjour" --name="monde"
+          # assumes the Dagger Cloud token is in
+          # a repository secret named DAGGER_CLOUD_TOKEN
+          # set via the GitHub UI/CLI
+          # cloud-token: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+
 jobs:
   CI:
     name: Publish hello app
